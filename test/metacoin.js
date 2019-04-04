@@ -37,4 +37,29 @@ contract('MetaCoin', (accounts) => {
     assert.equal(accountOneEndingBalance, accountOneStartingBalance - amount, "Amount wasn't correctly taken from the sender");
     assert.equal(accountTwoEndingBalance, accountTwoStartingBalance + amount, "Amount wasn't correctly sent to the receiver");
   });
+  it('should send gold correctly', async () => {
+    const metaCoinInstance = await MetaCoin.deployed();
+
+    // Setup 2 accounts.
+    const accountOne = accounts[0];
+    const accountTwo = accounts[1];
+
+    // Get initial balances of first and second account.
+    const accountOneStartingBalance = (await metaCoinInstance.getBalance.call(accountOne)).toNumber();
+    const accountTwoStartingBalance = (await metaCoinInstance.getBalance.call(accountTwo)).toNumber();
+
+    // Make transaction from first account to second.
+    const amount = 5;
+    await metaCoinInstance.sendCoin(accountTwo, amount, { from: accountOne });
+
+    // Get balances of first and second account after the transactions.
+    const accountOneEndingBalance = (await metaCoinInstance.getBalance.call(accountOne)).toNumber();
+    const accountTwoEndingBalance = (await metaCoinInstance.getBalance.call(accountTwo)).toNumber();
+
+
+    assert.equal(accountOneEndingBalance, accountOneStartingBalance - amount, "Amount wasn't correctly taken from the sender");
+    assert.equal(accountTwoEndingBalance, accountTwoStartingBalance + amount, "Amount wasn't correctly sent to the receiver");
+  });  
+
+
 });
